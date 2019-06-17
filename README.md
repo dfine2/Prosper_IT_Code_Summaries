@@ -18,5 +18,8 @@ CODE SNIPPET
 ## TravelScrape
 
 ### Building the Dashboard App
+I was tasked with laying the groundwork of the Dashboard App that serves a the central hub of the TravelScrape Program. The Dashboard provides the interface from which users can access all of their other apps.  This was mostly a front-end project, although I did need to set-up the proper URL configuration and connect the Dashboard links to a "dummy app" until the actual TravelScrape apps were ready for use.
+
+CODE SNIPPET
 
 ### Building the Hotels App
