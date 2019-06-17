@@ -23,7 +23,7 @@ I was tasked with laying the groundwork of the Dashboard App that serves a the c
 CODE SNIPPET
 
 ### Building the Hotels App
-I created an app that uses the Amadeus API to find hotel offers near a given city. The app gives users the hotel's name, star-rating, address, cost per night, and if available, a little information blurb.  My biggest challenge was that Amadeus takes input in the form of city aiport IATA codes, and because I knew users were more likely to enter a city name, I had to find a way to match city names to the relevant codes.  I did this by scraping Wikipedia's airport listings and dumping the information into a .csv file that ultimately contained information for 8904 unique airports.  
+I created an app that uses the Amadeus API to find hotel offers near a given city. The app gives users the hotel's name, star-rating, address, cost per night, and if available, a little information blurb.  My biggest challenge was that Amadeus takes input in the form of city aiport IATA codes, and because I knew users were more likely to enter a city name, I had to find a way to match city names to the relevant codes.  I did this by scraping Wikipedia's airport listings and dumping the information into a .csv file that ultimately contained information for 8904 unique airports. I used a .csv file, rather than taking data directly from the BeautifulSoup response, because it was far easier to have all of the data on the same page.
 
 CODE SNIPPET
 
