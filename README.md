@@ -135,10 +135,7 @@ def hotelIndex(request):
 def hotelSearch(request, IATA):
     form = SearchForm(initial = "")
    #Initialize Amadeus
-    amadeus = Client(
-        client_id = "oXoHcPGNhQAKNcvvhFIkB9kFudwrBYTy",
-        client_secret = "zs3PhgM4HNpZbCm4"
-    )
+   ## SECRET KEY INFO HERE
     response = amadeus.shopping.hotel_offers.get(cityCode = IATA)
     with open("log.json", "w+", encoding="utf-8") as log:
         json.dump(response.data, log, indent=2)
