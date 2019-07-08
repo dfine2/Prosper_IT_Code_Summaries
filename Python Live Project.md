@@ -1,4 +1,4 @@
-# Python Live Projects
+# Python Live Project
 ## Introduction
 While studying Python with the Tech Academy, I joined a team of other students on a two-week sprint to roll out two MVT web apps using Django.  The first of these, DataScrape, collects pertinent information such as weather, news, and restaurants from across the Web and delivers it to the user in a single compact application. The second app, TravelScrape, operates on the same model but with a narrower scope towards information that would be useful to someone planning a trip, such as flights, hotels, and travel advisories. Not only did I get the opportunity to work on a number of rewarding user stories, but I also got first-hand experience working with project managers and colleagues and familiarizing myself with management software such as Azure DevOps.
 
