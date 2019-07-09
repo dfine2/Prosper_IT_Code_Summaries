@@ -147,3 +147,99 @@ The filter() function maintains a list of the values in the filter row and check
 
 ## Week Two
 
+### Chat Model
+Now working on an entirely new iteration of the Management Portal, one of the team's early tasks was to create a way for users to send and receive chat messages. My task was to lay the groundwork for this feature by building a Chat C# class with Entity Framework Code First.
+```C#
+namespace ManagementPortal.Models
+{
+    public class ChatMessage
+    {
+        [Display(Name = "Id")]
+        public Guid ChatMessageId { get; set; }
+        [Display(Name = "Sender")]
+        public string Sender { get; set; }
+        [Display(Name = "Date")]
+        public DateTime Date { get; set; }
+        [Display(Name = "Message")]
+        public string Message { get; set; }
+    }
+}
+```
+
+I then scaffolded an Entity Framework Controller to manage CRUD operations and views for the new class, so that a user's chats would be stored in the apps SQL database.
+
+### Company News
+The team had recently added a CompanyNews C# model and controller to allow users to read and post company-wide notices. I was charged with both creating seeding the database with dummy events, and with adding a partial view to display on the dashboard. I seeded the CompanyNews database by adding following code to the project's Configuration.cs file.
+```C#
+ var NewsItems = new List<CompanyNews>
+            {
+                new CompanyNews
+                {
+                    DateStamp = Convert.ToString(new DateTime(2018, 12, 11).Ticks),
+                    Title = "Company Party",
+                    NewsItem = "The Company New Year's Eve party will be held at Jack's house this year. Contact Jack for directions.See you there!",
+                    ExpirationDate = new DateTime(2018, 1, 3)
+                },
+                new CompanyNews
+                {
+                    DateStamp = Convert.ToString(new DateTime(2019, 3, 9).Ticks),
+                    Title = "Kittens for Adoption",
+                    NewsItem = "Three beautiful black kittens for adoption. Just 3 weeks old. Contact Jill for more information",
+                    ExpirationDate = new DateTime(2019, 1, 3)
+                },
+                new CompanyNews
+                {
+                    DateStamp = Convert.ToString(new DateTime(2019, 6, 26).Ticks),
+                    Title = "New Team Member",
+                    NewsItem = "Joel joins us today as a new team member. Be sure to welcome him!",
+                    ExpirationDate = new DateTime(2019, 7, 22)
+                },
+                new CompanyNews
+                {
+                    DateStamp = Convert.ToString(new DateTime(2019, 7, 2).Ticks),
+                    Title = "Fourth of July",
+                    NewsItem = "The office will be closed from Thursday, July 4 to Friday, July 5 for the holiday.",
+                    ExpirationDate = new DateTime(2019, 7, 6)
+                },
+                  new CompanyNews
+                {
+                    DateStamp = Convert.ToString(new DateTime(2019, 9, 5).Ticks),
+                    Title = "Clothing Drive",
+                    NewsItem = "We are collecting donations for our annual clothing drive.Please contact Joe for more information.",
+                    ExpirationDate = new DateTime(2019, 10, 2)
+                }
+            };
+            NewsItems.ForEach(x => context.CompanyNews.AddOrUpdate(n => n.DateStamp, x));
+            context.SaveChanges();
+        }
+```
+I proceeded to write a partial view for the dashboard, using the entries in the CompanyNews database table as my model.
+
+```razor
+	@using ManagementPortal.Models
+	@model IEnumberable<CompanyNews>
+	<div class="container" id="CompanyNewsPartial">
+		<div class="row" id="NewsPartialHeader">
+			<h3 class="text-center">Company News</h3>
+			<a href="#createModal" data-toggle="modal">Create New</a>
+		</div>
+		<div class="row">
+			@foreach(var story in Model)
+			{
+				<div class="col">
+					<div class="card newsCard">
+						<div class="card-body">
+							<h5 class="card-title">@story.Title</h5>
+							<hr/>
+							<p class="card-subtitle">@story.DateStamp</p>
+							<br/>
+							<p class="card-text">@story.NewsItem</p>
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+```
+Coupled with some CSS, this code produced the following result:
+
