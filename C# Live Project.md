@@ -52,7 +52,7 @@ The final result looks like this, though ideally the user would be closer to the
 
 ![Leaflet Routing](https://github.com/dfine2/code_summaries/blob/master/img/directions(small).PNG?raw=true)
 
-## Data Filter Row
+### Data Filter Row
 The Management Portal's dashboard contained a Razor partial view to display and edit a table of site users.  My job was to add a filter row to this table so that users could limit the display to only rows matching desired criteria. I began by adding a new row to the table to hold the filter fields.
 ```razor
 <tr>
