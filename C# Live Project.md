@@ -1,6 +1,6 @@
 # C# Live Project
 ## Introduction
-After learning the basics C# and ASP.NET with the Tech Academy, I had the opportunity to work with a team of other students to design an Management Portal for Erectors, Inc., a real construction company.  Using Entity Framework Code First, we built a fully operational MVC application to manage employees, work shifts, jobs, company news, and other important operations.  The two-week sprint began relatively late into the application's development, and I spent most of the first week adding functionality and finishing touches to a nearly deliverable-ready project. During the second week, the team and I began on a fresh version of the project, giving me hands-on experience with Code First and the early stages of MVC development.
+After learning the basics C# and ASP.NET with the Tech Academy, I had the opportunity to work with a team of other students to design a Management Portal for Erectors, Inc., a real construction company.  Using Entity Framework Code First, we built a fully operational MVC application to manage employees, work shifts, jobs, company news, and other important operations.  The two-week sprint began relatively late into the application's development, and I spent most of the first week adding functionality and finishing touches to a nearly deliverable-ready project. During the second week, the team and I began on a fresh version of the project, giving me hands-on experience with Code First and the early stages of MVC development.
 ## Week One
 ### Directions to the Worksite
 One of the many functions of the Management Portal was to display a list of scheduled construction jobs for various customers.  While the app already provided addresses and maps for each of these jobs, it did not provide travel instructions. My task was to provide the user step by step navigation from their current location to the job site. First, I wrote a JavaScript function to get the user's current location.
@@ -52,41 +52,97 @@ The final result looks like this, though ideally the user would be closer to the
 
 ![Leaflet Routing](https://github.com/dfine2/code_summaries/blob/master/img/directions(small).PNG?raw=true)
 
-## Displaying Shift Times
-The Management Portal's dashboard offered the user a concise view of all scheduled construction jobs and the employees assigned to complete them. We had recently implemented a new ShiftTime.cs class to hold daily work schedules for each job, but the dashboard display was not properly displaying them. Adding some simple Razor to the View to get a job's ShiftTime property fixed this display issue.
+## Data Filter Row
+The Management Portal's dashboard contained a Razor partial view to display and edit a table of site users.  My job was to add a filter row to this table so that users could limit the display to only rows matching desired criteria. I began by adding a new row to the table to hold the filter fields.
 ```razor
-<span>Standard Start Time: @AMPM(job.ShiftTimes.Default)  </span>
-```
-I wrote the AMPM() C# function to display the proper merdian abbreviation (AM or PM) after the time.
-```C#
-	//Quick function to determine AM/PM
+<tr>
+			<td>
+				@Html.TextBox("UsernameFilter", null, new { @list = "Usernames", @class = "filterBox", @onkeyup = "filter()"})
+				<datalist id="Usernames">
+					@foreach (var Item in Model)
+					{
+						<option>@Item.UserName</option>
+					}
+				</datalist>
+			</td>
+			<td>
+				@Html.TextBox("FNameFilter", null, new { @list = "FNames", @class="filterBox", @onkeyup = "filter()"})
+				<datalist id="FNames">
+					@foreach (var Item in Model)
+					{
+						<option>@Item.FName</option>
+					}
+				</datalist>
+			</td>
+			<td>
+				@Html.TextBox("LNameFilter", null, new { @list = "LNames", @class = "filterBox", @onkeyup ="filter()"})
+				<datalist id="LNames">
+					@foreach (var Item in Model)
+					{
+						<option>@Item.LName</option>
+					}
+				</datalist>
+			</td>
+			<td>
+				@Html.TextBox("Category", null, new { @list = "Categories", @class = "filterBox", @onkeyup="filter()" })
+				<datalist id="Categories">
+					@foreach (var Item in Model)
+					{
+						<option>@Item.WorkType</option>
+					}
+				</datalist>
+			</td>
+			<td>
+				@Html.TextBox("Role", null, new { @list = "Roles", @class = "filterBox", @onkeyup="filter()" })
+				<datalist id="Roles">
+					@foreach (var Item in Model)
+					{
+						<option>@Item.UserRole</option>
+					}
+				</datalist>
+			</td>
 
-	string AMPM(string time)
-	{
-		string[] SplitTime = time.Split(':');
-		int hours = Convert.ToInt16(SplitTime[0]);
-		string minutes = SplitTime[1];
-		string meridian;
-		if (hours > 12)
-		{
-			meridian = "PM";
-			hours -= 12;
-		}
-		else if (hours == 12)
-		{
-			meridian = "PM";
-		}
-		else if (hours == 0)
-		{
-			hours = 12;
-			meridian = "AM";
-		}
-		else
-		{
-			meridian = "AM";
-		}
-		time = Convert.ToString(hours) + ":" + minutes + " " + meridian;
-		return time;
-}
+		</tr>
 ```
+This code both created a row of empty text fields and bound them to properties of the model class(User). I then wrote the filter() JavaScript function, which I bound to the onkeyup event of each text field.
+
+```JavaScript
+function filter() {
+		var table = document.getElementById("userList").getElementsByTagName("tr");
+		//Get filter values in a list
+		var filterRow = table[1].getElementsByTagName("td");
+		var elements = [];
+		for (var i = 0; i < filterRow.length; i++) {
+			element = filterRow[i].firstElementChild;
+			elements.push(element.value);
+		}
+		//Iterate over rows
+		for (var i = 2; i < table.length; i++) {
+			var hits = []  //A list of booleans, if any are false, hide the row.
+			var data = table[i].getElementsByTagName("td");
+			for (var x = 0; x < elements.length; x++) {
+				if (data[x].getElementsByTagName("select").length > 0) {  //Filtering for drop-down list categories
+					var list = data[x].innerText.split("\n");
+					var content = list[0];
+				}
+				else {
+					var content = data[x].innerText;
+				}
+				var input = elements[x].toLowerCase();
+				var hit = content.toLowerCase().includes(input);
+				hits.push(hit);
+				}
+				if (hits.includes(false)) {
+					$(table[i]).hide();
+				}
+				else {
+					$(table[i]).show();
+				}
+			}
+		} 
+```
+The filter() function maintains a list of the values in the filter row and checks them against the values in the corresponding columns. If any column does not include the text in its filter field, then that row is hidden.
+
+
+
 
