@@ -48,6 +48,6 @@ I had getLocation() feed a parameter into the pre-existing function responsible 
 		L.Control.geocoder().addTo(map); // Add a search bar for the user to manually find a location
 ```
 
-The final result looks like this, though ostensibly the user will be closer to the job site than I was.
+The final result looks like this, though ideally the user would be closer to the job site than I was.
 
-
+![Leaflet Routing](https://github.com/dfine2/code_summaries/blob/master/img/directions(small).PNG?raw=true)
