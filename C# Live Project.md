@@ -143,6 +143,7 @@ function filter() {
 ```
 The filter() function maintains a list of the values in the filter row and checks them against the values in the corresponding columns. If any column does not include the text in its filter field, then that row is hidden.
 
+![User Filter](https://github.com/dfine2/code_summaries/blob/master/img/usernamefilter.PNG?raw=true)
 
 
 
