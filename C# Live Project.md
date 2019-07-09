@@ -242,4 +242,5 @@ I proceeded to write a partial view for the dashboard, using the entries in the 
 	</div>
 ```
 Coupled with some CSS, this code produced the following result:
+![New View](https://github.com/dfine2/code_summaries/blob/master/img/newsview.PNG?raw=true)
 
