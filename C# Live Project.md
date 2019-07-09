@@ -52,3 +52,41 @@ The final result looks like this, though ideally the user would be closer to the
 
 ![Leaflet Routing](https://github.com/dfine2/code_summaries/blob/master/img/directions(small).PNG?raw=true)
 
+## Displaying Shift Times
+The Management Portal's dashboard offered the user a concise view of all scheduled construction jobs and the employees assigned to complete them. We had recently implemented a new ShiftTime.cs class to hold daily work schedules for each job, but the dashboard display was not properly displaying them. Adding some simple Razor to the View to get a job's ShiftTime property fixed this display issue.
+```razor
+<span>Standard Start Time: @AMPM(job.ShiftTimes.Default)  </span>
+```
+I wrote the AMPM() C# function to display the proper merdian abbreviation (AM or PM) after the time.
+```C#
+	//Quick function to determine AM/PM
+
+	string AMPM(string time)
+	{
+		string[] SplitTime = time.Split(':');
+		int hours = Convert.ToInt16(SplitTime[0]);
+		string minutes = SplitTime[1];
+		string meridian;
+		if (hours > 12)
+		{
+			meridian = "PM";
+			hours -= 12;
+		}
+		else if (hours == 12)
+		{
+			meridian = "PM";
+		}
+		else if (hours == 0)
+		{
+			hours = 12;
+			meridian = "AM";
+		}
+		else
+		{
+			meridian = "AM";
+		}
+		time = Convert.ToString(hours) + ":" + minutes + " " + meridian;
+		return time;
+}
+```
+
