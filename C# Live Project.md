@@ -216,30 +216,47 @@ The team had recently added a CompanyNews C# model and controller to allow users
 I proceeded to write a partial view for the dashboard, using the entries in the CompanyNews database table as my model.
 
 ```razor
-	@using ManagementPortal.Models
-	@model IEnumberable<CompanyNews>
-	<div class="container" id="CompanyNewsPartial">
-		<div class="row" id="NewsPartialHeader">
-			<h3 class="text-center">Company News</h3>
-			<a href="#createModal" data-toggle="modal">Create New</a>
-		</div>
-		<div class="row">
-			@foreach(var story in Model)
-			{
-				<div class="col">
-					<div class="card newsCard">
-						<div class="card-body">
-							<h5 class="card-title">@story.Title</h5>
-							<hr/>
-							<p class="card-subtitle">@story.DateStamp</p>
-							<br/>
-							<p class="card-text">@story.NewsItem</p>
-						</div>
+@using ManagementPortal.Models
+@model IEnumberable<CompanyNews>
+<div class="container" id="CompanyNewsPartial">
+	<div class="row" id="NewsPartialHeader">
+		<h3 class="text-center">Company News</h3>
+		<a href="#createModal" data-toggle="modal">Create New</a>
+	</div>
+	<div class="row">
+		@foreach(var story in Model)
+		{
+			<div class="col">
+				<div class="card newsCard">
+					<div class="card-body">
+						<h5 class="card-title">@story.Title</h5>
+						<hr/>
+						<p class="card-subtitle">@story.DateStamp</p>
+						<br/>
+						<p class="card-text">@story.NewsItem</p>
 					</div>
 				</div>
-			}
+			</div>
+		}
+	</div>
+</div>
+
+<!-- Create Pop-up -->
+
+<div class="modal fade" role="dialog" id="createModal">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">%times;</button>
+				<h4 class="modal-title">Create an News Story</h4>
+			</div>
+			<div class="modal-body">
+				@Html.Action("_CreateCompanyNews","Home")
+			</div>
 		</div>
 	</div>
+</div>
+
 ```
 Coupled with some CSS, this code produced the following result:
 ![New View](https://github.com/dfine2/code_summaries/blob/master/img/newsview.PNG?raw=true)
