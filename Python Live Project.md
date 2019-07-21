@@ -2,6 +2,8 @@
 ## Introduction
 While studying Python with the Tech Academy, I joined a team of other students on a two-week sprint to roll out two MVT web apps using Django.  The first of these, DataScrape, collects pertinent information such as weather, news, and restaurants from across the Web and delivers it to the user in a single compact application. The second app, TravelScrape, operates on the same model but with a narrower scope towards information that would be useful to someone planning a trip, such as flights, hotels, and travel advisories. Not only did I get the opportunity to work on a number of rewarding user stories, but I also got first-hand experience working with project managers and colleagues and familiarizing myself with management software such as Azure DevOps.
 
+A few weeks later, I returned to the TravelScrape project for a second sprint. This time my mission was to harness Slack's APIs to create a live chat feature on our own app. While working on this assignment, I greatly deepened my understanding of Django as a server, communicating between client-side and server-side code, the breadth of available Python packages and APIs, and how to choose the best way forward from a multitude of viable options.
+
 
 ## DataScrape
 
@@ -143,4 +145,33 @@ def hotelSearch(request, IATA):
     context = {'form' : form, 'results' : result}
     return render(request, "HotelApp\index.html", context)
 ```
+
+## Slack on TravelScrape
+
+Incorporating live chat functionality into TravelScrape presented two sets of challenges. The first involved communicating between my local Django server and the Slack server. The second involved dynamically displaying the chat messages on the webpage, to create a chat feature along the lines of applications like Facebook Messenger. By the end of the sprint I'd created a very rudimentary messaging app for future sprints to build upon.
+
+### Communicating with Slack
+
+Slack offers three APIs that allow users to post messages to channels, the Web API, the Real-Time Messaging (RTM) API, and the Events API. Initially, the documentation, mostly written in cURL rather than Python or JavaScript, was overwhelming and I didn't know where to begin. I even explored other avenues for messaging, such as SignalR, but eventually found that if I could learn to translate the cURL into a language I could understand, Slack offered the best way forward.  Through the translation process, I learned that APIs the APIs were language independent, and it was up to me how I wanted to communicate with them.
+
+#### Sending Messages
+
+During my first attempt to send messages, I wrote a Python query to the Web API, Slack's simplest and easiest to use API.
+
+```Python
+def sendMessage(text):
+        url = "https://slack.com/api/chat.postMessage"
+        headers = {
+                "Authorization": f"Bearer {token}",
+        }
+        message = {
+                "text" : text,
+                "channel" : "CL8Q6SDA",
+                "Content-type" : "application/json"
+        }
+        r = requests.post(url, message, headers=headers)
+```
+
+This code did successfully send my message to Slack, but it ran into issues when trying to asynchronously update my page so that each new message would be rendered in a chat box, as below:
+
 
