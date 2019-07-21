@@ -322,5 +322,5 @@ function Slack_receive_message(file, io){
     $("#Slack_body").append(message);
 }
 ```
-
+With the addition of a Django view and template, I'd now developed the base for my first real-time messaging app.
 
