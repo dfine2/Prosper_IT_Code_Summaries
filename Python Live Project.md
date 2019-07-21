@@ -154,8 +154,6 @@ Incorporating live chat functionality into TravelScrape presented two sets of ch
 
 Slack offers three APIs that allow users to post messages to channels, the Web API, the Real-Time Messaging (RTM) API, and the Events API. Initially, the documentation, mostly written in cURL rather than Python or JavaScript, was overwhelming and I didn't know where to begin. I even explored other avenues for messaging, such as SignalR, but eventually found that if I could learn to translate the cURL into a language I could understand, Slack offered the best way forward.  Through the translation process, I learned that APIs the APIs were language independent, and it was up to me how I wanted to communicate with them.
 
-#### Sending Messages
-
 During my first attempt to send messages, I wrote a Python query to the Web API, Slack's simplest and easiest to use API.
 
 ```Python
@@ -173,5 +171,156 @@ def sendMessage(text):
 ```
 
 This code did successfully send my message to Slack, but it ran into issues when trying to asynchronously update my page so that each new message would be rendered in a chat box, as below:
+
+![Chat Box](img/chatbox.PNG)
+
+So I decided to make a JavaScript AJAX call with
+
+```JavaScript
+        function Slack_send_message(input){
+            var Bot_token = Python_to_js("Slack_bot_token");
+            var url = "https://slack.com/api/chat.postMessage";
+            var token = Bot_token;
+            var channel = document.getElementById("Slack_chosen_channel").innerText;
+            var text = document.getElementById(input).value;
+
+            $.ajax({
+                data: {
+                    "token" : token,
+                    "channel":channel,
+                    "text":text,
+                },
+                dataType: 'text',
+                type:'POST',
+                url: url,
+                crossDomain: true,
+                error: function(xhr, status, error){
+                    console.log("error:" + error);
+                },
+                success: function(data){
+                    console.log("result: " + data);
+                    document.getElementById(input).value = "";
+                },
+            });
+
+        };
+```
+For an authorization token, this code employs a variable stored in Django's settings.py, which I captured for JavaScript by writing a function to read the contents of a hidden <div> containing a Django template variable. 
+        
+To receive messages, I turned to Slack's Events API, which allowed me to subscribe to a message 'event' that sends JSON to my app every time a new messages was posted.  I set it up with the following code, using NGROK to turn my local Django URL into a public URL accessible by Slack.
+
+```Python
+SLACK_VERIFICATION_TOKEN = getattr(settings,'SLACK_VERIFICATION_TOKEN',None)
+SLACK_OAUTH_TOKEN = getattr(settings,'SLACK_OAUTH_TOKEN',None)
+SLACK_BOT_USER_TOKEN = getattr(settings,"SLACK_BOT_USER_TOKEN",None)
+SLACK_BOT_NAME = getattr(settings, "SLACK_BOT_NAME",None)
+Client = WebClient(SLACK_BOT_USER_TOKEN)
+
+class Slack(APIView):
+        def post(self, request, *args, **kwargs):
+                slack_message = request.data
+                if slack_message.get('token') != SLACK_VERIFICATION_TOKEN:
+                        
+                        return Response(status=status.HTTP_403_FORBIDDEN)
+                       
+               
+
+                # verification challenge
+                if slack_message.get('type') == 'url_verification':
+                        return Response(data=slack_message, status=status.HTTP_200_OK)
+
+
+                # watch events
+                if 'event' in slack_message:
+                        event_message = slack_message.get('event')
+                        print(event_message)
+
+                        #process user's message, differentiate incoming and outgoing
+                        username = event_message.get('username')
+                        if username == SLACK_BOT_NAME:  
+                                with open(r".\SlackApp\json\outgoing_events.json","w+") as file:
+                                        file.write(json.dumps(event_message, indent=2))
+                        else:
+                                with open(r".\SlackApp\json\incoming_events.json","w+") as file:
+                                        file.write(json.dumps(event_message, indent=2))
+                        
+                return Response(status=status.HTTP_200_OK)
+```
+        
+        Both the send and receive requests returned a JSON object that I needed to manipulate both client-side, in JavaScript, and server-side, in Python. I therefore used Python to create two .JSON files to serve as a link between my JavaScript and Python functions.
+        
+```Python
+def outgoing_events(request):
+        with open(r".\SlackApp\json\outgoing_events.json","r+") as file:
+                content = file.read()
+        print(content)
+        return HttpResponse(
+                content,
+                content_type='text',
+                status=200
+        )
+
+def incoming_events(request):
+        with open(r".\SlackApp\json\incoming_events.json","r+") as file:
+                content = file.read()
+        print(content)
+        return HttpResponse(
+                content,
+                content_type='text',
+                status=200
+        )
+```
+
+Then, whenever I called my JavaScript "Slack_send_message" function, I used a Django url to also call the Python function to update the .JSON file.
+
+```JavaScript
+function Slack_receive_outgoing(input){
+    var promise = new Promise(function(resolve, reject){
+            resolve(Slack_send_message(input));
+        }
+    );
+    promise.then(setTimeout(function(){
+        Slack_receive_message('\\SlackApp\\func_outgoing_events','Slack_sent');} ,1000)
+    )};
+
+function Slack_read(file){
+    var rawfile  = new XMLHttpRequest();
+    var content;
+    rawfile.open("GET",file,false);
+    rawfile.onreadystatechange = function(){
+        if (rawfile.readyState === 4){
+            if(rawfile.status === 200 || rawfile.status === 0){
+                content = rawfile.responseText;
+            }
+        }
+    }
+    rawfile.send(null);
+    return content;
+
+}
+
+function Slack_receive_message(file, io){
+    const data = Slack_read(file);
+    const Jdata = JSON.parse(data);
+    console.log(Jdata);
+    var message = `
+    <div class="Slack_message ${io}">`
+        
+    if (io == "Slack_sent"){
+        message += `
+        <p>You</p>`
+    }
+    else{
+        message += `
+        <p>${Jdata['user']}</p>`
+        
+    }
+    message += `
+        <p>${Jdata['text']}</p>
+        <p>${Slack_time()}</p>
+        </div>`
+    $("#Slack_body").append(message);
+}
+```
 
 
