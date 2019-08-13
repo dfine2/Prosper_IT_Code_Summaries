@@ -1,6 +1,7 @@
-# C# Live Project
+# C#/ASP.NET Projects
+
 ## Introduction
-After learning the basics C# and ASP.NET with the Tech Academy, I had the opportunity to work with a team of other students to design a Management Portal for Erectors, Inc., a real construction company.  Using Entity Framework Code First, we built a fully operational MVC application to manage employees, work shifts, jobs, company news, and other important operations.  The two-week sprint began relatively late into the application's development, and I spent most of the first week adding functionality and finishing touches to a nearly deliverable-ready project. During the second week, the team and I began on a fresh version of the project, giving me hands-on experience with Code First and the early stages of MVC development. After a brief interruption for some Python work, I returned to this project for another two-week sprint.
+While working with Prosper I.T. Consulting and the Tech Academy, I joined a team of other students to design a Management Portal for Erectors, Inc., a real construction company.  Using Entity Framework Code First, we built a fully operational MVC application to manage employees, work shifts, jobs, company news, and other important operations.  The two-week sprint began relatively late into the application's development, and I spent most of the first week adding functionality and finishing touches to a nearly deliverable-ready project. During the second week, the team and I began on a fresh version of the project, giving me hands-on experience with Code First and the early stages of MVC development. After a brief interruption for some Python work, I returned to this project for another two-week sprint.
 
 ## First Sprint
 
